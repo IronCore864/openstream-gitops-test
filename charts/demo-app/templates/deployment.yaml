@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-app
+  labels:
+    app: demo-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+      - name: demo-app
+        {{ if .Values.image }}
+        image: "ironcore864/go-hello-http:{{ .Values.image.tag }}"
+        {{ else }}
+        image: "ironcore864/go-hello-http:{{ .Chart.AppVersion }}"
+        {{ end }}
+        ports:
+        - containerPort: 8080
